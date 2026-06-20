@@ -25,6 +25,8 @@ const btnResetFilters = document.getElementById('btn-reset-filters');
 // Stats Elements
 const statFeatures = document.querySelector('#stat-features .stat-value');
 const statFixes = document.querySelector('#stat-fixes .stat-value');
+const cardFeatures = document.getElementById('stat-features');
+const cardFixes = document.getElementById('stat-fixes');
 
 // Modal Elements
 const tweetModal = document.getElementById('tweet-modal');
