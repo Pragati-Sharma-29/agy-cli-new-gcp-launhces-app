@@ -124,6 +124,36 @@ function setupEventListeners() {
         closeModal();
         showToast('Opening Twitter Share Dialog...', 'success');
     });
+
+    // Interactive KPI Stats Filtering
+    const cardFeatures = document.getElementById('stat-features');
+    const cardFixes = document.getElementById('stat-fixes');
+    const cardTotalUpdates = document.getElementById('stat-total-updates');
+    const cardTotalDays = document.getElementById('stat-total-days');
+
+    if (cardFeatures) {
+        cardFeatures.addEventListener('click', () => {
+            filterType.value = 'Feature';
+            filterType.dispatchEvent(new Event('change'));
+            showToast('Filtering: Features only', 'success');
+        });
+    }
+    if (cardFixes) {
+        cardFixes.addEventListener('click', () => {
+            filterType.value = 'Fixed';
+            filterType.dispatchEvent(new Event('change'));
+            showToast('Filtering: Fixes & Changes', 'success');
+        });
+    }
+    if (cardTotalUpdates || cardTotalDays) {
+        const resetFilter = () => {
+            filterType.value = 'all';
+            filterType.dispatchEvent(new Event('change'));
+            showToast('Feed filter reset to show all types', 'success');
+        };
+        if (cardTotalUpdates) cardTotalUpdates.addEventListener('click', resetFilter);
+        if (cardTotalDays) cardTotalDays.addEventListener('click', resetFilter);
+    }
 }
 
 // Utility prototype method
@@ -300,11 +330,18 @@ function renderUpdateItem(update, date, link) {
                 <span class="badge ${badgeClass}">
                     <i class="${badgeIcon}"></i> ${update.type}
                 </span>
-                <button class="btn-tweet-inline" 
-                        onclick="openTweetBuilder('${escapedDate}', '${escapedType}', '${escapedText}', '${escapedLink}')" 
-                        title="Tweet about this update">
-                    <i class="fa-brands fa-x-twitter"></i> Share Update
-                </button>
+                <div class="update-actions-wrapper">
+                    <button class="btn-action-inline" 
+                            onclick="copyUpdateMarkdown('${escapedDate}', '${escapedType}', '${escapedText}', '${escapedLink}', this)" 
+                            title="Copy update as Markdown to clipboard">
+                        <i class="fa-regular fa-copy"></i> Copy Markdown
+                    </button>
+                    <button class="btn-action-inline" 
+                            onclick="openTweetBuilder('${escapedDate}', '${escapedType}', '${escapedText}', '${escapedLink}')" 
+                            title="Tweet about this update">
+                        <i class="fa-brands fa-x-twitter"></i> Share
+                    </button>
+                </div>
             </div>
             <div class="update-item-body">
                 ${update.html}
@@ -411,4 +448,28 @@ function updateToggleUI(theme) {
         icon.className = 'fa-solid fa-sun';
         text.textContent = 'Light Mode';
     }
+}
+
+/* ==========================================================================
+   CLIPBOARD SHARING & MARKDOWN EXPORT
+   ========================================================================== */
+function copyUpdateMarkdown(date, type, text, link, button) {
+    const markdown = `### Google Cloud BigQuery Update (${date})\n**Category**: ${type}\n\n${text}\n\n[Official Release Notes](${link})`;
+    
+    navigator.clipboard.writeText(markdown).then(() => {
+        // Provide instant tactile visual feedback in button
+        const originalHTML = button.innerHTML;
+        button.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--color-feature)"></i> Copied!`;
+        button.disabled = true;
+        
+        showToast('Update Markdown copied to clipboard!', 'success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        showToast('Failed to copy update.', 'error');
+    });
 }
