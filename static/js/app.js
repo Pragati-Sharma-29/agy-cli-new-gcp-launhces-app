@@ -1,3 +1,7 @@
+// Initialize theme as early as possible to avoid page flashing
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.body.setAttribute('data-theme', savedTheme);
+
 // State variables
 let releaseNotesData = [];
 let activeFilters = {
@@ -7,6 +11,7 @@ let activeFilters = {
 };
 
 // Elements
+const btnThemeToggle = document.getElementById('btn-theme-toggle');
 const btnRefresh = document.getElementById('btn-refresh');
 const searchInput = document.getElementById('search-input');
 const btnClearSearch = document.getElementById('btn-clear-search');
@@ -38,6 +43,10 @@ let currentTweetMeta = null;
    INITIALIZATION
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+    // Update Theme Toggle UI
+    const activeTheme = document.body.getAttribute('data-theme') || 'dark';
+    updateToggleUI(activeTheme);
+
     fetchReleaseNotes();
     setupEventListeners();
 });
@@ -46,6 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
    EVENT LISTENERS Setup
    ========================================================================== */
 function setupEventListeners() {
+    // Theme toggle click
+    if (btnThemeToggle) {
+        btnThemeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleUI(newTheme);
+        });
+    }
+
     // Refresh click
     btnRefresh.addEventListener('click', () => {
         fetchReleaseNotes();
@@ -373,4 +393,22 @@ function showToast(message, type = 'success') {
             toast.remove();
         }, 400);
     }, 3500);
+}
+
+/* ==========================================================================
+   THEME TOGGLE UI UPDATE
+   ========================================================================== */
+function updateToggleUI(theme) {
+    if (!btnThemeToggle) return;
+    const icon = btnThemeToggle.querySelector('.btn-icon i');
+    const text = btnThemeToggle.querySelector('.btn-text');
+    if (!icon || !text) return;
+    
+    if (theme === 'light') {
+        icon.className = 'fa-solid fa-moon';
+        text.textContent = 'Dark Mode';
+    } else {
+        icon.className = 'fa-solid fa-sun';
+        text.textContent = 'Light Mode';
+    }
 }

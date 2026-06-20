@@ -34,6 +34,53 @@
     /* Layout */
     --border-radius: 16px;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Stars / Modal specific */
+    --stars-opacity: 0.25;
+    --bg-modal: #0f1526;
+    --border-modal: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="light"] {
+    --bg-primary: #f4f6f9;
+    --bg-secondary: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(0, 122, 255, 0.3);
+    
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+    
+    /* Brand Accents for Light Mode */
+    --accent-cyan: #0284c7;
+    --accent-blue: #2563eb;
+    --accent-purple: #6d28d9;
+    --gradient-brand: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    --gradient-purple: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+    
+    /* Category Colors for Light Mode (high legibility) */
+    --color-feature: #047857;
+    --color-fixed: #1d4ed8;
+    --color-changed: #b45309;
+    --color-deprecated: #b91c1c;
+    --color-general: #6d28d9;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.06), 0 4px 15px rgba(0, 0, 0, 0.04);
+    --shadow-glow: 0 8px 30px rgba(0, 122, 255, 0.08);
+
+    /* Stars / Modal specific */
+    --stars-opacity: 0.01;
+    --bg-modal: #ffffff;
+    --border-modal: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .brand-title h1 {
+    background: linear-gradient(120deg, var(--text-primary) 10%, var(--accent-blue) 60%, var(--accent-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* ==========================================================================
@@ -69,7 +116,7 @@ body {
         radial-gradient(2px 2px at 90px 110px, #aaa, rgba(0,0,0,0)),
         radial-gradient(1px 1px at 150px 140px, #fff, rgba(0,0,0,0));
     background-size: 200px 200px;
-    opacity: 0.25;
+    opacity: var(--stars-opacity, 0.25);
     animation: backgroundGlow 20s infinite alternate;
 }
 
@@ -279,7 +326,7 @@ body {
     font-size: 1.45rem;
     font-weight: 700;
     font-family: 'Outfit', sans-serif;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .stat-label {
@@ -321,7 +368,7 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    color: #fff;
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     transition: var(--transition-smooth);
@@ -365,7 +412,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 14px 40px 14px 16px;
-    color: #fff;
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     cursor: pointer;
@@ -451,7 +498,7 @@ body {
     font-family: 'Outfit', sans-serif;
     font-size: 1.25rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 12px;
     display: inline-flex;
     align-items: center;
@@ -643,7 +690,7 @@ body {
     font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .state-desc {
@@ -677,8 +724,8 @@ body {
 }
 
 .modal-card {
-    background: #0f1526;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--bg-modal, #0f1526);
+    border: 1px solid var(--border-modal, rgba(255, 255, 255, 0.12));
     border-radius: 20px;
     width: 100%;
     max-width: 580px;
@@ -708,7 +755,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .modal-close-btn {
@@ -742,8 +789,8 @@ body {
 
 .tweet-textarea-wrapper {
     position: relative;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
 }
@@ -753,7 +800,7 @@ body {
     background: none;
     border: none;
     padding: 16px;
-    color: #fff;
+    color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     resize: none;
@@ -769,7 +816,7 @@ body {
     padding: 8px 16px;
     font-size: 0.8rem;
     color: var(--text-secondary);
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-top: 1px solid var(--border-color);
 }
 
 .character-count-box.exceeded {
@@ -779,7 +826,7 @@ body {
 
 /* Update source reference box in modal */
 .update-preview-box {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-primary);
     border-radius: 12px;
     padding: 16px;
     border-left: 3px solid var(--accent-cyan);
@@ -799,7 +846,7 @@ body {
     border-radius: 4px;
 }
 
-.preview-badge-date { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+.preview-badge-date { background: var(--border-color); color: var(--text-secondary); }
 .preview-badge-type { background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); }
 
 .preview-text {
