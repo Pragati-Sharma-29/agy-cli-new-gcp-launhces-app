@@ -1033,3 +1033,79 @@ body,
     outline: none;
     box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent-cyan) !important;
 }
+
+/* ==========================================================================
+   STAT DYNAMIC DROPDOWN & RESET BUTTON CARD
+   ========================================================================== */
+.stat-select-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.stat-select-wrapper select {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding-right: 24px;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+.stat-select-wrapper select option {
+    background-color: var(--bg-modal);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.stat-select-wrapper::after {
+    content: '\f107';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.btn-reset-card {
+    background: rgba(255, 255, 255, 0.01) !important;
+    border: 1px dashed var(--border-color) !important;
+    text-align: left;
+    outline: none;
+    align-items: center;
+}
+
+.btn-reset-card:hover {
+    background: rgba(239, 68, 68, 0.05) !important;
+    border-color: var(--color-deprecated) !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.15) !important;
+}
+
+.btn-reset-card:hover .reset-icon {
+    color: var(--color-deprecated);
+    transform: rotate(-180deg);
+}
+
+.btn-reset-card:active {
+    transform: translateY(0) scale(0.97) !important;
+}
+
+.reset-icon {
+    transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reset-text {
+    font-size: 1.25rem !important;
+    font-weight: 700;
+    color: var(--text-primary);
+}

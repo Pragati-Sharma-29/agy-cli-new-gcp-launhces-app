@@ -7,7 +7,8 @@ let releaseNotesData = [];
 let activeFilters = {
     search: '',
     type: 'all',
-    sort: 'desc'
+    sort: 'desc',
+    days: 30
 };
 
 // Elements
@@ -18,10 +19,10 @@ const btnClearSearch = document.getElementById('btn-clear-search');
 const filterType = document.getElementById('filter-type');
 const sortOrder = document.getElementById('sort-order');
 const timelineEvents = document.getElementById('timeline-events');
+const selectDaysRange = document.getElementById('select-days-range');
+const btnResetFilters = document.getElementById('btn-reset-filters');
 
 // Stats Elements
-const statTotalDays = document.querySelector('#stat-total-days .stat-value');
-const statTotalUpdates = document.querySelector('#stat-total-updates .stat-value');
 const statFeatures = document.querySelector('#stat-features .stat-value');
 const statFixes = document.querySelector('#stat-fixes .stat-value');
 
@@ -125,12 +126,17 @@ function setupEventListeners() {
         showToast('Opening Twitter Share Dialog...', 'success');
     });
 
-    // Interactive KPI Stats Filtering
-    const cardFeatures = document.getElementById('stat-features');
-    const cardFixes = document.getElementById('stat-fixes');
-    const cardTotalUpdates = document.getElementById('stat-total-updates');
-    const cardTotalDays = document.getElementById('stat-total-days');
+    // Days Range Selector change
+    if (selectDaysRange) {
+        selectDaysRange.addEventListener('change', (e) => {
+            activeFilters.days = parseInt(e.target.value, 10);
+            calculateDashboardStats();
+            renderTimeline();
+            showToast(`Filtering: Last ${activeFilters.days} Days of updates`, 'success');
+        });
+    }
 
+    // Interactive KPI Stats Filtering (Clicking on Features or Fixes)
     if (cardFeatures) {
         cardFeatures.addEventListener('click', () => {
             filterType.value = 'Feature';
@@ -145,14 +151,29 @@ function setupEventListeners() {
             showToast('Filtering: Fixes & Changes', 'success');
         });
     }
-    if (cardTotalUpdates || cardTotalDays) {
-        const resetFilter = () => {
-            filterType.value = 'all';
-            filterType.dispatchEvent(new Event('change'));
-            showToast('Feed filter reset to show all types', 'success');
-        };
-        if (cardTotalUpdates) cardTotalUpdates.addEventListener('click', resetFilter);
-        if (cardTotalDays) cardTotalDays.addEventListener('click', resetFilter);
+
+    // Reset Filters button card listener
+    if (btnResetFilters) {
+        btnResetFilters.addEventListener('click', () => {
+            // 1. Reset State
+            activeFilters.days = 30;
+            activeFilters.type = 'all';
+            activeFilters.search = '';
+            activeFilters.sort = 'desc';
+
+            // 2. Sync UI components
+            if (selectDaysRange) selectDaysRange.value = '30';
+            if (filterType) filterType.value = 'all';
+            if (searchInput) searchInput.value = '';
+            if (btnClearSearch) btnClearSearch.style.display = 'none';
+            if (sortOrder) sortOrder.value = 'desc';
+
+            // 3. Re-calculate metrics and update UI
+            calculateDashboardStats();
+            renderTimeline();
+
+            showToast('Feed reset to default: 30 days of updates!', 'success');
+        });
     }
 }
 
@@ -211,26 +232,32 @@ async function fetchReleaseNotes() {
    STATS CALCULATIONS
    ========================================================================== */
 function calculateDashboardStats() {
-    let days = releaseNotesData.length;
-    let totalUpdates = 0;
     let featuresCount = 0;
     let otherCount = 0;
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     releaseNotesData.forEach(entry => {
-        totalUpdates += entry.updates.length;
-        entry.updates.forEach(u => {
-            if (u.type.toLowerCase() === 'feature') {
-                featuresCount++;
-            } else {
-                otherCount++;
-            }
-        });
+        const entryDate = new Date(entry.date);
+        entryDate.setHours(0, 0, 0, 0);
+        const timeDiff = today - entryDate;
+        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+        // Only compute stats if within selected days limit
+        if (daysDiff < activeFilters.days) {
+            entry.updates.forEach(u => {
+                if (u.type.toLowerCase() === 'feature') {
+                    featuresCount++;
+                } else {
+                    otherCount++;
+                }
+            });
+        }
     });
 
-    statTotalDays.textContent = days;
-    statTotalUpdates.textContent = totalUpdates;
-    statFeatures.textContent = featuresCount;
-    statFixes.textContent = otherCount;
+    if (statFeatures) statFeatures.textContent = featuresCount;
+    if (statFixes) statFixes.textContent = otherCount;
 }
 
 /* ==========================================================================
@@ -250,6 +277,18 @@ function renderTimeline() {
                 entry.date.toLowerCase().includes(activeFilters.search);
             return matchesType && matchesSearch;
         });
+    });
+
+    // Filter out day entries that exceed active days limit relative to today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    filteredEntries = filteredEntries.filter(entry => {
+        const entryDate = new Date(entry.date);
+        entryDate.setHours(0, 0, 0, 0);
+        const timeDiff = today - entryDate;
+        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        return daysDiff < activeFilters.days;
     });
 
     // Remove entries that ended up with empty updates after filtering

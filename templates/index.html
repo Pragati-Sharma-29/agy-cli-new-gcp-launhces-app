@@ -55,15 +55,16 @@
             <div class="stat-card" id="stat-total-days">
                 <div class="stat-icon"><i class="fa-regular fa-calendar-days"></i></div>
                 <div class="stat-info">
-                    <span class="stat-value">-</span>
-                    <span class="stat-label">Days Logged</span>
-                </div>
-            </div>
-            <div class="stat-card" id="stat-total-updates">
-                <div class="stat-icon"><i class="fa-solid fa-circle-info"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value">-</span>
-                    <span class="stat-label">Total Updates</span>
+                    <div class="stat-select-wrapper">
+                        <select id="select-days-range" aria-label="Select days range to filter release notes">
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="15">Last 15 Days</option>
+                            <option value="7">Last 7 Days</option>
+                            <option value="3">Last 3 Days</option>
+                            <option value="1">Last 24 Hours</option>
+                        </select>
+                    </div>
+                    <span class="stat-label">Days Range</span>
                 </div>
             </div>
             <div class="stat-card" id="stat-features">
@@ -80,6 +81,13 @@
                     <span class="stat-label">Fixes & Changes</span>
                 </div>
             </div>
+            <button class="stat-card btn-reset-card" id="btn-reset-filters" title="Reset all filters to default">
+                <div class="stat-icon reset-icon text-danger"><i class="fa-solid fa-arrow-rotate-left"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value reset-text">Reset Feed</span>
+                    <span class="stat-label">To 30 days / All Updates</span>
+                </div>
+            </button>
         </section>
 
         <!-- FILTERS -->
